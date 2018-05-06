@@ -3,14 +3,14 @@
 pipeline {
   agent none
   stages {
-    stage('Ruby Install') {
+    stage('Test') {
       agent {
-        docker {
-          image 'ruby:2.5.1'
+        node {
+          label "ruby"
         }
       }
-      steps {
-        sh 'gem install rails'
+      stage("Install dependencies") {
+        sh "gem install bundler --no-rdoc --no-ri && bundle install"
       }
     }
     stage('Docker Build') {
