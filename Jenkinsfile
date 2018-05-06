@@ -6,7 +6,7 @@ pipeline {
     stage('Ruby Install') {
       agent {
         docker {
-          image 'ruby:2.5.0'
+          image 'ruby:2.5.1'
         }
       }
       steps {
