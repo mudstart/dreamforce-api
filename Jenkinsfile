@@ -2,38 +2,19 @@
 
 pipeline {
    agent {
-    // Use docker container
     docker {
-      image 'ruby:2.5.0'
+        image 'ruby:2..5.2'
+        label 'latest'
+        args  '-v /tmp:/tmp'
     }
   }
-  stages {
-    stage('Pre-build') {
-      steps {
-        fileExists 'Gemfile'
-        fileExists 'Dockerfile'
-      }
+  agent {
+    // Equivalent to "docker build -f Dockerfile.build --build-arg version=1.0.2 ./build/
+    dockerfile {
+        filename 'Dockerfile.build'
+        dir 'build'
+        label 'latest'
+        additionalBuildArgs  '--build-arg version=1.0.2'
     }
-    stage('Docker Run') {
-      agent any
-      steps {
-        sh 'docker-compose up'
-      }
-    }
-    stage('Docker Build') {
-      agent any
-      steps {
-        sh 'docker-compose build -t mudstart/dreamforce-api:latest .'
-      }
-    }
-  stage('Docker Push') {
-      agent any
-      steps {
-        withCredentials([usernamePassword(credentialsId: 'dockerHub', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
-          sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
-          sh 'docker push mudstart/dreamforce-api:latest'
-        }
-      }
-    }
-  }
+}
 }
