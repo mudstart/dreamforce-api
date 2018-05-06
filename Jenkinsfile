@@ -12,7 +12,7 @@ pipeline {
     stage('Docker Build') {
       agent any
       steps {
-        sh 'docker build -t mudstart/dreamforce-api:latest .'
+        sh 'docker-compose build -t mudstart/dreamforce-api:latest .'
       }
     }
   stage('Docker Push') {
