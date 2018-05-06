@@ -1,14 +1,32 @@
-Jenkinsfile(Declarative Pipeline)
-pipeline {
-   agent {
-         docker { image 'ruby:2.5.0'}      
-   }
+#!groovy
 
-stages {
-    stage('Test'){
-        steps {
-             sh 'ruby -v'
-           }
+pipeline {
+  agent none
+  stages {
+    stage('Ruby Install') {
+      agent {
+        docker {
+          image 'ruby:2.5.0'
         }
-     }
-   }
+      }
+      steps {
+        sh 'gem install rails'
+      }
+    }
+    stage('Docker Build') {
+      agent any
+      steps {
+        sh 'docker build -t mudstart/dreamforce-api:latest .'
+      }
+    }
+  stage('Docker Push') {
+      agent any
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'dockerHub', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
+          sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
+          sh 'docker push mudstart/dreamforce-api:latest'
+        }
+      }
+    }
+  }
+}
