@@ -9,7 +9,9 @@ pipeline {
         fileExists 'Dockerfile'
         sh 'docker info'
       }
-      stage("Install dependencies") {
+    }
+    stage("Install dependencies") {
+      steps {
         sh "gem install bundler --no-rdoc --no-ri && bundle install"
       }
     }
