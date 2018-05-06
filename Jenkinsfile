@@ -1,12 +1,23 @@
 #!Rails
 
 pipeline {
-  agent any
+   agent {
+    // Use docker container
+    docker {
+      image 'ruby:2.5.0'
+    }
+  }
   stages {
     stage('Pre-build') {
       steps {
         fileExists 'Gemfile'
         fileExists 'Dockerfile'
+      }
+    }
+    stage('Docker Run') {
+      agent any
+      steps {
+        sh 'docker-compose up'
       }
     }
     stage('Docker Build') {
