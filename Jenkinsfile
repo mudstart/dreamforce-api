@@ -9,22 +9,6 @@ pipeline {
         fileExists 'Dockerfile'
       }
     }
-    stage("Install dependencies") {
-      steps {
-        sh "gem install bundler --no-rdoc --no-ri && bundle install"
-      }
-    }
-    stage('Test') {
-      steps {
-        sh 'docker-compose run'
-        sh 'docker run -d -p 3002:3000 mudstar/dreamforce-api'
-      }
-    }
-    stage('Clean up') {
-      steps {
-        sh 'docker stop $(docker ps -q)'
-      }
-    }
     stage('Docker Build') {
       agent any
       steps {
